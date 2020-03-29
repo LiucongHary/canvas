@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    canvas {
+        border: 1px solid #ccc;
+        background: #ccc;
+    }
+</style>
+
+<body>
+
+    <canvas width=600 height=400></canvas>
+    <script>
+        let context = document.querySelector('canvas').getContext('2d');
+        let isMouseDown = false;
+        let img = './images/05.jpg';
+        document.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            context.beginPath();
+            if (isMouseDown) {
+                context.moveTo(e.clientX, e.clientY)
+            }
+        }, false)
+        document.addEventListener('mousemove', (e) => {
+            if (isMouseDown) {
+                let image = new Image();
+                image.onload = () => {
+                    let drawImg = context.createPattern(image, 'no-repeat');
+                    context.lineWidth = 10;
+                    context.lineCap = "round";
+                    context.lineJoin = 'round';
+                    context.strokeStyle = drawImg;
+                    context.lineTo(e.clientX, e.clientY);
+                    context.stroke();
+                }
+                image.src = img;
+            }
+        })
+        document.addEventListener('mouseup', (e) => {
+            isMouseDown = false;
+        })
+
+    </script>
+
+</body>
+
+</html>
