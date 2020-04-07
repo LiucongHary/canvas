@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    canvas {
+        border: 1px solid #ccc;
+    }
+</style>
+
+<body>
+    <!-- 中心思想：坐标轴动，小鸟在坐标轴的（0，0）的中心位置 -->
+    <canvas width=800 height=600></canvas>
+    <script>
+        let context = document.querySelector('canvas').getContext('2d');
+        let width = context.canvas.width;
+        let height = context.canvas.height;
+
+        // 画图
+        let img = new Image();
+        let index = 0;
+        let acc = 0.0005; // 鸟下落的加速度
+        let v0 = 0; // 鸟下落的初速度
+        let startTime = new Date().getTime();
+        let h = 100; // 下降高度
+        let angleMax = Math.PI / 4;
+        let speedMax = 0.1;
+        img.onload = () => {
+            let imgWidth = img.width / 3;
+            let imgHeight = img.height;
+            let animate = function () {
+                // 画鸟
+                context.clearRect(0, 0, width, height);
+                context.save();
+
+                let currentTime = new Date().getTime();
+                let times = currentTime - startTime;
+                // 重置开始时间
+                startTime = currentTime;
+                h += v0 * times + acc * times * times / 2;
+                // 重置初速度
+                v0 += acc * times;
+                // 鸟下落
+                context.translate(100, h);
+                // 鸟的旋转角度
+                let angle = v0 / speedMax * angleMax
+                if (angle > angleMax) {
+                    angle = Math.PI / 4
+                }
+                context.rotate(angle);
+                context.drawImage(img, index * imgWidth, 0, imgWidth, imgHeight, - imgWidth / 2, - imgHeight / 2, imgWidth, imgHeight);
+
+                index++;
+                context.restore();
+                if (index > 2) {
+                    index = 0;
+                }
+
+                requestAnimationFrame(animate);
+                // 点击鼠标，小鸟向上走
+                context.canvas.onclick = () => {
+                    v0 = -0.2
+                }
+            }
+            animate();
+
+
+        }
+        img.src = './images/birds.png';
+
+
+
+
+    </script>
+
+</body>
+
+</html>
