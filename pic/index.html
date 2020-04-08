@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    canvas {
+        border: 1px solid #ccc;
+    }
+</style>
+
+<body>
+    <canvas height=400 width=600></canvas>
+    <script>
+        let PersonMove = function () {
+            this.context = document.querySelector('canvas').getContext('2d');
+            this.width = this.context.canvas.width;
+            this.height = this.context.canvas.height;
+            this.image = './images/04.png';
+            this.x0 = this.width / 2;
+            this.y0 = this.height / 2;
+            this.step = 10;
+        };
+        PersonMove.prototype.init = function () {
+            this.drawPic()
+        }
+
+        PersonMove.prototype.drawPic = function () {
+            let img = new Image();
+            img.onload = (e) => {
+                console.log(e);
+                let imgWidth = img.width / 4;
+                let imgHeight = img.height / 4;
+                this.context.drawImage(img, 0, 0, imgWidth, imgHeight, this.x0 - imgWidth / 2, this.y0 - imgHeight / 2, imgWidth, imgHeight);
+                this.drawStep(img, imgWidth, imgHeight);
+                console.log(this.direction)
+            }
+            img.src = this.image;
+        }
+        PersonMove.prototype.drawStep = function (img, imgWidth, imgHeight) {
+            // 37左 38上 39右 40下
+            let direction = 0;
+            let stepX = 0;
+            let stepY = 0;
+            let index = 0;
+            window.addEventListener('keydown', (e) => {
+                // console.log(e)
+                this.context.clearRect(0, 0, this.width, this.height)
+                switch (e.keyCode) {
+                    case 37:
+                        direction = 1;
+                        this.x0 - imgWidth / 2 + stepX * this.step >= 10 ? --stepX : stepX;
+                        break;
+                    case 38:
+                        // --stepY;
+                        this.y0 - imgHeight / 2 + stepY * this.step >= 10 ? --stepY : +stepY;
+                        direction = 3;
+                        break;
+                    case 39:
+                        direction = 2;
+                        // ++stepX
+                        this.x0 - imgWidth / 2 + stepX * this.step >= this.width - imgWidth ? stepX : ++stepX;
+                        break;
+                    case 40:
+                        // ++stepY;
+                        this.y0 - imgHeight / 2 + stepY * this.step >= this.height - imgHeight ? stepY : ++stepY;
+                        direction = 0;
+                        break;
+                }
+                if (index > 3) {
+                    index = 0
+                }
+                // console.log(this.y0 - imgHeight / 2 + stepY * this.step, this.height - imgHeight)
+                this.context.drawImage(
+                    img,
+                    imgWidth * index,
+                    direction * imgHeight, imgWidth,
+                    imgHeight,
+                    this.x0 - imgWidth / 2 + stepX * this.step,
+                    this.y0 - imgHeight / 2 + stepY * this.step,
+                    imgWidth,
+                    imgHeight
+                );
+                index++;
+
+            }, false)
+        }
+
+        new PersonMove().init();
+
+    </script>
+
+</body>
+
+</html>
